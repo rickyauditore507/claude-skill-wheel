@@ -29,31 +29,46 @@
 
 云端效果通常更稳，但需要把参考音上传到第三方，先看隐私条款和价格。
 
-## 3. 生成 8 段台词
+## 3. 生成台词
 
-台词在 `assets/make_video.py` 的 `SCENES` 里（`text` 字段）。用克隆工具逐段合成，导出：
+### 抖音 48 秒版（6 段）
 
-```
-assets/video/voice/scene_01.wav   # 这是 Skill Wheel，一个为 Claude Code 打造的技能圆盘。
-assets/video/voice/scene_02.wav   # skills 越装越多……
-...
-assets/video/voice/scene_08.wav   # 现在已经上传到 GitHub，链接放在评论区……
-```
+台词在 `assets/make_video_douyin.py` 的 `SCENES` 里：
+
+| 文件 | 台词 |
+| --- | --- |
+| `assets/video/douyin_voice/scene_01.wav` | 80 个 skill，一个都想不起来？ |
+| `scene_02.wav` | Claude Code 用户，skills 超过十个的，继续看。 |
+| `scene_03.wav` | 按住 Ctrl 加 Alt 加空格，所有技能在鼠标位置摊开。 |
+| `scene_04.wav` | 滑到哪个哪个放大，滚轮翻页，松开直接写进输入框；没动就松开是取消。 |
+| `scene_05.wav` | 自动扫描本地 skills，按使用频率排序；圆盘打开时滚轮会被锁住。 |
+| `scene_06.wav` | Apache 二点零开源，已经上传 GitHub，链接放在评论区。 |
+
+### 横版 89 秒版（8 段）
+
+台词在 `assets/make_video.py` 的 `SCENES` 里，文件放
+`assets/video/voice/scene_01.wav` … `scene_08.wav`。
+
+每段开头/结尾留 0.3–0.6 秒静音，工具里不要加背景音乐或混响。
 
 建议每段开头/结尾留 0.3–0.6 秒静音，工具里不要加背景音乐或混响。
 
 ## 4. 重渲视频
 
 ```powershell
+# 抖音竖屏 48 秒
+python assets/make_video_douyin.py --reuse-audio --render
+
+# 横版 89 秒
 python assets/make_video.py --reuse-audio --render
 ```
 
 脚本会：
 - 用 ffmpeg 把任意格式转成 22.05k 单声道；
-- 按新配音时长重新计算每段画面时长（总长会随你的语速变化）；
+- 按新配音时长重新计算每段画面时长（总长会随你的语速变化；抖音版会在 48 秒左右）；
 - 重新混入配乐、响度标准化到 −16 LUFS。
 
-输出仍是 `assets/video/skill-wheel-intro.mp4`。
+输出分别是 `assets/video/skill-wheel-douyin-50s.mp4` 和 `assets/video/skill-wheel-intro.mp4`。
 
 ## 5. 想改台词
 
