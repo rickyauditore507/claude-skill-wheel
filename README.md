@@ -1,5 +1,7 @@
 # Skill Wheel
 
+[![CI](https://github.com/rickyauditore507/claude-skill-wheel/actions/workflows/ci.yml/badge.svg)](https://github.com/rickyauditore507/claude-skill-wheel/actions/workflows/ci.yml)
+
 ![Skill Wheel](assets/banner.png)
 
 按住 **Ctrl + Alt + Space**（默认，可在配置里改），屏幕上弹出一圈已安装的 Claude Code skills；鼠标滑到哪个扇形，哪个就放大；滚轮切换下一页圆盘；**松开按键**就把 `/skill名 ` 写进 Claude 输入框。鼠标没动就松开 = 取消。
@@ -27,7 +29,7 @@ VS Code 扩展 API 本身做不了透明悬浮窗，所以圆盘由 Python 层�
 ## 安装（源码）
 
 ```powershell
-git clone https://github.com/<your-name>/claude-skill-wheel.git
+git clone https://github.com/rickyauditore507/claude-skill-wheel.git
 cd claude-skill-wheel
 uv venv --python 3.12 .venv
 uv pip install --python .venv\Scripts\python.exe -r requirements.txt

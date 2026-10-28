@@ -12,7 +12,7 @@ VS Code companion extension that starts/stops it and focuses the Claude input.
 ## Install (from source)
 
 ```powershell
-git clone https://github.com/<your-name>/claude-skill-wheel.git
+git clone https://github.com/rickyauditore507/claude-skill-wheel.git
 cd claude-skill-wheel
 uv venv --python 3.12 .venv
 uv pip install --python .venv\Scripts\python.exe -r requirements.txt
