@@ -663,7 +663,7 @@ def build_voice_track(timeline, total: float) -> Path:
     return out
 
 
-def make_music(total: float) -> Path:
+def make_music(total: float, name: str = "music.wav") -> Path:
     sr = 44100
     n = int(total * sr)
     t = np.arange(n) / sr
@@ -713,7 +713,7 @@ def make_music(total: float) -> Path:
 
     stereo = np.stack([out, np.roll(out, int(0.008 * sr))], axis=1)
     data = (np.clip(stereo, -1, 1) * 32767).astype(np.int16)
-    path = VID / "music.wav"
+    path = VID / name
     with wave.open(str(path), "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)

@@ -37,15 +37,15 @@ SCENES = [
     dict(key="hook", min=3.6,
          text="80 个 skill，一个都想不起来？"),
     dict(key="filter", min=5.2,
-         text="Claude Code 用户，skills 超过十个的，继续看。"),
+         text="用人工智能写代码的用户，技能数量超过十个的，继续看。"),
     dict(key="wheel", min=8.0,
-         text="按住 Ctrl 加 Alt 加空格，所有技能在鼠标位置摊开。"),
-    dict(key="interact", min=11.5,
-         text="滑到哪个哪个放大，滚轮翻页，松开直接写进输入框；没动就松开是取消。"),
+         text="按住 control 加 alt 加空格，所有技能在鼠标位置摊开。"),
+    dict(key="interact", min=9.8,
+         text="滑到哪个哪个放大，滑轮翻页，松开直接写进输入框；没动就松开就是取消。"),
     dict(key="details", min=9.5,
          text="自动扫描本地 skills，按使用频率排序；圆盘打开时滚轮会被锁住。"),
     dict(key="end", min=8.5,
-         text="Apache 二点零开源，已经上传 GitHub，链接放在评论区。"),
+         text="阿帕奇二点零开源，已经上传到吉特哈布，链接放在评论区。"),
 ]
 
 LABELS = ["archify", "design", "diagram", "slides", "brand", "banner", "ui ux", "community"]
