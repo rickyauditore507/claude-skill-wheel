@@ -7,3 +7,5 @@ demo*.png
 .vscode/
 node_modules/
 *.vsix
+
+assets/video/

@@ -122,6 +122,16 @@ description: 一句话说明，会显示在圆盘中心
   - 索引在 `catalog/index.json`，用 PR 收录
   - CLI：`.venv/Scripts/python.exe overlay/main.py --catalog`
 
+## 视频
+
+90 秒介绍视频可离线生成：Windows SAPI 中文配音 + numpy 配乐 + QPainter 帧 + ffmpeg 编码。
+
+```powershell
+python assets/make_video.py --render
+```
+
+输出：`assets/video/skill-wheel-intro.mp4`（生成物已在 `.gitignore` 中排除）。
+
 ## 海报
 
 ![Skill Wheel poster](assets/poster.png)
