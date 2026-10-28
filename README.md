@@ -124,25 +124,9 @@ description: 一句话说明，会显示在圆盘中心
   - 索引在 `catalog/index.json`，用 PR 收录
   - CLI：`.venv/Scripts/python.exe overlay/main.py --catalog`
 
-## 视频
+## 演示视频
 
-两版介绍视频都可离线生成：Windows SAPI 中文配音 + numpy 配乐 + QPainter 帧 + ffmpeg 编码。
-
-```powershell
-# 抖音竖屏 1080x1920，约 48 秒：钩子 → 筛人 → 演示 → GitHub
-python assets/make_video_douyin.py --render
-
-# 横版 1920x1080，约 89 秒：完整介绍
-python assets/make_video.py --render
-```
-
-输出：
-- `assets/video/skill-wheel-douyin-50s.mp4`
-- `assets/video/skill-wheel-intro.mp4`
-
-（生成物已在 `.gitignore` 中排除。）
-
-想换成你自己的声音：见 [`assets/VOICE.md`](assets/VOICE.md)，替换 8 段 WAV 后 `--reuse-audio --render` 即可。
+链接待补充。
 
 ## 海报
 
