@@ -1,0 +1,4 @@
+# Normalize text, keep binaries binary
+* text=auto
+*.png binary
+*.vsix binary

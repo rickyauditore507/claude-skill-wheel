@@ -1,0 +1,35 @@
+name: Bug report
+description: Something broke or behaved unexpectedly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include the exact trigger, the app in focus, and what you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Extension version and overlay commit / release
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "`~/.claude/skill-wheel/overlay.log` and the Skill Wheel output channel"
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I reloaded the VS Code window and restarted the overlay
+        - label: I tried a trigger without a bare Alt modifier

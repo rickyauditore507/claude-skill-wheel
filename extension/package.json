@@ -1,0 +1,82 @@
+{
+  "name": "skill-wheel",
+  "displayName": "Skill Wheel",
+  "description": "Radial skill picker for Claude Code — hold Ctrl+Alt+Space, hover a skill, release to insert it.",
+  "version": "0.1.1",
+  "publisher": "ricky",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "skillWheel.start",
+        "title": "Skill Wheel: Start overlay"
+      },
+      {
+        "command": "skillWheel.stop",
+        "title": "Skill Wheel: Stop overlay"
+      },
+      {
+        "command": "skillWheel.restart",
+        "title": "Skill Wheel: Restart overlay"
+      },
+      {
+        "command": "skillWheel.openConfig",
+        "title": "Skill Wheel: Open config"
+      },
+      {
+        "command": "skillWheel.showLogs",
+        "title": "Skill Wheel: Show logs"
+      }
+    ],
+    "configuration": {
+      "title": "Skill Wheel",
+      "properties": {
+        "skillWheel.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the radial overlay when VS Code starts."
+        },
+        "skillWheel.projectDir": {
+          "type": "string",
+          "default": "",
+          "description": "Folder holding the overlay (defaults to ~/skill-wheel)."
+        },
+        "skillWheel.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Python interpreter that has PySide6 + pynput (defaults to <projectDir>/.venv/Scripts/pythonw.exe)."
+        },
+        "skillWheel.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Skill Wheel indicator in the status bar."
+        }
+      }
+    }
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skills",
+    "radial",
+    "overlay",
+    "vscode"
+  ],
+  "files": [
+    "extension.js",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ]
+}

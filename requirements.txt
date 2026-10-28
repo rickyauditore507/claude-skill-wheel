@@ -1,0 +1,4 @@
+# PySide6-Essentials avoids pulling WebEngine/Addons (~650MB).
+# QtCore/QtGui/QtWidgets are all the overlay needs.
+PySide6-Essentials>=6.7
+pynput>=1.7

@@ -1,0 +1,3 @@
+**/*.ts
+**/*.map
+**/node_modules/**

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: Python syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parse every overlay module
+        run: |
+          python - <<'PY'
+          import ast, pathlib
+          for p in sorted(pathlib.Path("overlay").glob("*.py")):
+              ast.parse(p.read_text(encoding="utf-8"))
+              print("ok", p)
+          PY
+
+  extension:
+    name: Extension syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node --check extension/extension.js
+      - run: node -e "JSON.parse(require('fs').readFileSync('extension/package.json','utf8')); console.log('package.json ok')"
+
+  package:
+    name: Package VSIX
+    runs-on: ubuntu-latest
+    needs: [python, extension]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Package VSIX
+        working-directory: extension
+        run: npx --yes @vscode/vsce package --no-dependencies --out ../skill-wheel.vsix
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skill-wheel-vsix
+          path: skill-wheel.vsix
