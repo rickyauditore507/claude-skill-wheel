@@ -29,6 +29,33 @@
 
 云端效果通常更稳，但需要把参考音上传到第三方，先看隐私条款和价格。
 
+## 替代方案：Edge 神经语音（不用克隆，干净男声）
+
+不想克隆、只想换一个清晰男声时，用微软 Edge 的神经语音（在线，效果比 Windows SAPI 好很多）：
+
+```powershell
+uv pip install --python .venv\Scripts\python.exe edge-tts
+
+# 需要代理时
+$env:HTTPS_PROXY="http://127.0.0.1:7897"
+$env:HTTP_PROXY="http://127.0.0.1:7897"
+
+.venv\Scripts\python.exe -m edge_tts --voice zh-CN-YunxiNeural --rate=+4% ^
+  --text "80 个 skill，一个都想不起来？" --write-media line1.mp3
+ffmpeg -y -i line1.mp3 -ar 44100 -ac 1 -c:a pcm_s16le scene_01.wav
+```
+
+可选中文男声：
+
+| 声音 | 风格 |
+| --- | --- |
+| `zh-CN-YunxiNeural` | 年轻、清晰、偏科技感（当前抖音版用的） |
+| `zh-CN-YunyangNeural` | 新闻播音、专业沉稳 |
+| `zh-CN-YunjianNeural` | 成熟、有力度 |
+| `zh-CN-YunxiaNeural` | 少年感 |
+
+生成 6 段后按 `scene_01..06.wav` 放进 `assets/video/douyin_voice/`，再执行 `--reuse-audio --render`。
+
 ## 3. 生成台词
 
 ### 抖音 48 秒版（6 段）
