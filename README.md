@@ -126,7 +126,8 @@ description: 一句话说明，会显示在圆盘中心
 
 ## 演示视频
 
-链接待补充。
+- 抖音：[Claude Code skill 轮盘（Ricky 的创意工坊）](https://v.douyin.com/TC4KSCrMKCE/)
+- 小红书：[Claude Code skill 轮盘](https://xhslink.cn/o/87189MkaioG)
 
 ## 海报
 

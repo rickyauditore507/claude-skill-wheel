@@ -35,6 +35,11 @@ overlay starts automatically.
 VS Code's extension API cannot draw transparent floating windows, so the ring is
 a separate Python overlay; the extension only supervises it.
 
+## Demo video
+
+- Douyin: [Claude Code skill wheel](https://v.douyin.com/TC4KSCrMKCE/)
+- Xiaohongshu: [Claude Code skill wheel](https://xhslink.cn/o/87189MkaioG)
+
 ## Notes
 
 - **Do not use a bare Alt modifier** for the trigger: VS Code enters its menu
