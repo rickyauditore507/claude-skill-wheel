@@ -132,6 +132,8 @@ python assets/make_video.py --render
 
 输出：`assets/video/skill-wheel-intro.mp4`（生成物已在 `.gitignore` 中排除）。
 
+想换成你自己的声音：见 [`assets/VOICE.md`](assets/VOICE.md)，替换 8 段 WAV 后 `--reuse-audio --render` 即可。
+
 ## 海报
 
 ![Skill Wheel poster](assets/poster.png)

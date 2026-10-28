@@ -29,6 +29,7 @@ from PySide6.QtGui import (QColor, QFont, QFontMetrics, QGuiApplication, QImage,
 ROOT = Path(__file__).resolve().parent.parent
 VID = ROOT / "assets" / "video"
 FRAMES_W, FRAMES_H, FPS = 1920, 1080, 30
+VOICE_RATE = 22050
 
 ACCENT = QColor("#D97757")
 ACCENT_SOFT = QColor("#F2B59E")
@@ -619,31 +620,37 @@ def synth_voice() -> list[dict]:
     return items
 
 
-def wav_info(path: Path):
-    with wave.open(str(path), "rb") as w:
-        return w.getframerate(), w.getnchannels(), w.getsampwidth(), w.getnframes()
+def decode_voice(path: Path) -> np.ndarray:
+    """Any WAV/MP3 -> 22.05k mono int16, so cloned or recorded takes drop in."""
+    proc = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", str(path), "-f", "s16le",
+         "-ac", "1", "-ar", str(VOICE_RATE), "-"],
+        capture_output=True, check=True)
+    return np.frombuffer(proc.stdout, dtype=np.int16)
+
+
+def voice_duration(path: Path) -> float:
+    return len(decode_voice(path)) / VOICE_RATE
 
 
 def build_timeline(items) -> list[dict]:
     timeline = []
     t = 1.0
     for sc, item in zip(SCENES, items):
-        rate, ch, sw, n = wav_info(Path(item["file"]))
-        vd = n / rate
+        vd = voice_duration(Path(item["file"]))
         dur = max(sc["min"], vd + 1.4)
         timeline.append({"key": sc["key"], "start": t, "dur": dur, "voice": vd,
-                         "file": item["file"], "rate": rate})
+                         "file": item["file"], "rate": VOICE_RATE})
         t += dur
     return timeline
 
 
 def build_voice_track(timeline, total: float) -> Path:
-    rate = timeline[0]["rate"]
+    rate = VOICE_RATE
     total_n = int(total * rate)
     buf = np.zeros(total_n, dtype=np.int16)
     for sc in timeline:
-        with wave.open(sc["file"], "rb") as w:
-            frames = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16)
+        frames = decode_voice(Path(sc["file"]))
         start = int((sc["start"] + 0.55) * rate)
         end = min(total_n, start + len(frames))
         buf[start:end] = frames[:end - start]
