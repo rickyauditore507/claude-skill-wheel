@@ -79,13 +79,6 @@
     "overlay",
     "vscode"
   ],
-  "files": [
-    "extension.js",
-    "package.json",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/rickyauditore507/claude-skill-wheel.git"
