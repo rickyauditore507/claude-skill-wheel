@@ -2,7 +2,6 @@
 
 const vscode = require('vscode');
 const { spawn } = require('child_process');
-const http = require('http');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -11,8 +10,6 @@ const APP_DIR = path.join(os.homedir(), '.claude', 'skill-wheel');
 const CONFIG_PATH = path.join(APP_DIR, 'config.json');
 
 let child = null;
-let server = null;
-let bridgePort = 0;
 let output = null;
 let statusItem = null;
 
@@ -53,56 +50,6 @@ function updateStatus(running) {
   else statusItem.hide();
 }
 
-function startServer() {
-  return new Promise((resolve) => {
-    if (server) return resolve(bridgePort);
-    server = http.createServer((req, res) => {
-      const send = (code, obj) => {
-        res.writeHead(code, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(obj));
-      };
-      if (req.method === 'GET' && req.url === '/health') {
-        return send(200, { ok: true, port: bridgePort });
-      }
-      if (req.method === 'POST' && req.url === '/focus-claude') {
-        focusClaude()
-          .then(() => send(200, { ok: true }))
-          .catch((err) => send(200, { ok: false, error: String(err) }));
-        return;
-      }
-      send(404, { ok: false });
-    });
-    server.on('error', (err) => {
-      log(`bridge server error: ${err.message}`);
-      resolve(0);
-    });
-    server.listen(0, '127.0.0.1', () => {
-      bridgePort = server.address().port;
-      log(`focus bridge on 127.0.0.1:${bridgePort}`);
-      try {
-        fs.mkdirSync(APP_DIR, { recursive: true });
-        fs.writeFileSync(path.join(APP_DIR, 'bridge.json'),
-          JSON.stringify({ port: bridgePort, pid: process.pid }, null, 2), 'utf8');
-      } catch (err) {
-        log(`cannot write bridge.json: ${err.message}`);
-      }
-      resolve(bridgePort);
-    });
-  });
-}
-
-async function focusClaude() {
-  try {
-    await vscode.commands.executeCommand('claude-vscode.focus');
-    log('focused Claude input');
-  } catch (err) {
-    log(`focus command unavailable: ${err && err.message}`);
-    try {
-      await vscode.commands.executeCommand('claude-vscode.editor.openLast');
-    } catch (_) { /* nothing else to try */ }
-  }
-}
-
 async function startOverlay() {
   if (child && !child.killed) {
     log('overlay already running');
@@ -117,10 +64,8 @@ async function startOverlay() {
     return;
   }
   const python = pythonPath(dir);
-  if (!bridgePort) await startServer();
 
   const args = ['-u', script, '--workspace', workspacePath(), '--parent-pid', String(process.pid)];
-  if (bridgePort) args.push('--port', String(bridgePort));
 
   log(`spawn: ${python} ${args.join(' ')}`);
   try {
@@ -217,11 +162,9 @@ function activate(context) {
   );
 
   updateStatus(false);
-  startServer().then(() => {
-    if (vscode.workspace.getConfiguration('skillWheel').get('autoStart', true)) {
-      startOverlay();
-    }
-  });
+  if (vscode.workspace.getConfiguration('skillWheel').get('autoStart', true)) {
+    startOverlay();
+  }
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
@@ -238,10 +181,6 @@ function activate(context) {
 
 function deactivate() {
   stopOverlay();
-  if (server) {
-    try { server.close(); } catch (_) { /* ignore */ }
-    server = null;
-  }
 }
 
 module.exports = { activate, deactivate };

@@ -2,7 +2,7 @@
   "name": "skill-wheel",
   "displayName": "Skill Wheel",
   "description": "Radial skill picker for Claude Code — hold Ctrl+Alt+Space, hover a skill, release to insert it.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "ricky",
   "engines": {
     "vscode": "^1.80.0"
@@ -61,7 +61,14 @@
           "description": "Show the Skill Wheel indicator in the status bar."
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "claude-vscode.focus",
+        "key": "ctrl+alt+shift+f12",
+        "when": "!config.claudeCode.useTerminal"
+      }
+    ]
   },
   "license": "Apache-2.0",
   "keywords": [

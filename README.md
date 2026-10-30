@@ -22,7 +22,7 @@
 | 部分 | 作用 |
 | --- | --- |
 | `overlay/`（Python + PySide6） | 透明置顶圆盘、全局热键、鼠标悬停/滚轮、注入文本 |
-| `extension/`（VS Code 扩展） | 随 VS Code 启停 overlay、状态栏、`/focus-claude` 桥 |
+| `extension/`（VS Code 扩展） | 随 VS Code 启停 overlay、状态栏、聚焦当前活动窗口的 Claude 输入框 |
 
 VS Code 扩展 API 本身做不了透明悬浮窗，所以圆盘由 Python 层绘制；扩展负责生命周期和聚焦 Claude 输入框。
 
@@ -63,7 +63,7 @@ powershell -File .\install.ps1
 | `radius` | `250` | 圆盘外半径（逻辑像素） |
 | `innerRadius` | `118` | 中心圆半径 |
 | `insertMode` | `"insert"` | `insert` 用剪贴板粘贴（最稳）；`insert_and_enter` 粘贴并回车；`clipboard` 只复制不注入 |
-| `focusClaude` | `true` | 选中后先调用 `claude-vscode.focus` 聚焦 Claude 输入框 |
+| `focusClaude` | `true` | 选中后发送 `Ctrl+Alt+Shift+F12`（扩展注册的 keybinding），聚焦**当前活动窗口**的 Claude 输入框；多窗口/拖出面板也正确 |
 | `sources.personal` | `true` | 扫描 `~/.claude/skills/*/SKILL.md` |
 | `sources.project` | `true` | 扫描当前工作区 `.claude/skills/*/SKILL.md` |
 | `sources.plugins` | `false` | 扫描 `~/.claude/plugins/**/skills/**/SKILL.md`（会混入大量市场插件技能） |
@@ -109,7 +109,7 @@ description: 一句话说明，会显示在圆盘中心
 | --- | --- |
 | 按热键没反应 | 看托盘图标是否在；`~/.claude/skill-wheel/overlay.log` 的 `hotkey armed`；或 `Skill Wheel: Show logs` |
 | 状态栏没有 Skill Wheel | 确认重载过窗口；`~/.vscode/extensions/ricky.skill-wheel-0.1.1` 存在 |
-| 圆盘出现但选中没写入 | 确认 Claude 输入框可用；`focusClaude` 为 true 时需要扩展在运行；也可试 `insertMode: "clipboard"` |
+| 圆盘出现但选中没写入 | 确认 Claude 输入框可用；`focusClaude` 为 true 时需要扩展在运行且已重载窗口；也可试 `insertMode: "clipboard"` |
 | 按了组合键但 VS Code 收到反引号 | pynput 钩子被其他键盘软件抢占（输入法/游戏键盘套件），换一个触发键 |
 | 圆盘位置偏 / 多屏异常 | 当前版本按光标所在屏幕居中，但半径/中心用逻辑坐标；多屏不同缩放时建议先只用一个屏幕 |
 

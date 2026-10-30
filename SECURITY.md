@@ -9,8 +9,8 @@ file a public issue for exploitable problems.
 
 - The overlay listens to global keyboard/mouse hooks while running. It only reads
   the configured trigger; it does not log keystrokes.
-- The VS Code extension opens an HTTP server bound to `127.0.0.1` on a random port.
-  It only accepts `POST /focus-claude`, which focuses the Claude input.
+- The VS Code extension contributes a keybinding (`Ctrl+Alt+Shift+F12`) to focus the
+  Claude input in the active window. It runs no local server and opens no ports.
 - Imported community skills are third-party content. They are never executed by
   the wheel; importing copies `SKILL.md` into `~/.claude/skills/` after an explicit
   confirmation that shows the source repository and license.

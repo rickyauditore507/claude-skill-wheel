@@ -9,7 +9,6 @@ import subprocess
 import sys
 import threading
 import time
-import urllib.request
 from pathlib import Path
 
 from PySide6 import QtCore, QtGui, QtWidgets
@@ -204,7 +203,7 @@ class Controller(QtCore.QObject):
         def work() -> None:
             try:
                 if self.cfg.get("focusClaude", True):
-                    self._focus_claude()
+                    wininput.send_focus_claude()
                 time.sleep(0.35)
                 wininput.release_modifiers()
                 time.sleep(0.06)
@@ -228,18 +227,6 @@ class Controller(QtCore.QObject):
         self._old_clip = None
         if old is not None:
             QTimer.singleShot(1200, lambda: wininput.set_clipboard_text(old))
-
-    def _focus_claude(self) -> None:
-        if not self.port:
-            return
-        url = f"http://127.0.0.1:{self.port}/focus-claude"
-        try:
-            req = urllib.request.Request(url, data=b"{}", method="POST",
-                                         headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=0.4) as resp:
-                resp.read()
-        except Exception as exc:
-            logger.info("focus bridge unavailable: %s", exc)
 
     def quit(self) -> None:
         try:

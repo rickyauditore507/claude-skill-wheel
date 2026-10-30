@@ -158,6 +158,22 @@ def set_clipboard_text(text: str) -> bool:
         user32.CloseClipboard()
 
 
+def send_focus_claude() -> None:
+    """Focus the Claude input in the ACTIVE VS Code window.
+
+    The extension contributes ctrl+alt+shift+f12 to claude-vscode.focus.
+    Sending the chord (instead of calling a bridge in one window) is what makes
+    multi-window / dragged-out Claude panels behave correctly.
+    """
+    VK_F12 = 0x7B
+    _send(_key_input(vk=VK_CONTROL), _key_input(vk=VK_MENU), _key_input(vk=VK_SHIFT),
+          _key_input(vk=VK_F12),
+          _key_input(vk=VK_F12, flags=KEYEVENTF_KEYUP),
+          _key_input(vk=VK_SHIFT, flags=KEYEVENTF_KEYUP),
+          _key_input(vk=VK_MENU, flags=KEYEVENTF_KEYUP),
+          _key_input(vk=VK_CONTROL, flags=KEYEVENTF_KEYUP))
+
+
 def send_paste() -> None:
     """Ctrl+V into whatever has focus (webview textareas, native edits)."""
     VK_V = 0x56
