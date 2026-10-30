@@ -206,6 +206,19 @@ def type_text(text: str, inter_char_delay: float = 0.002) -> None:
             time.sleep(inter_char_delay)
 
 
+def get_foreground_hwnd() -> int:
+    return int(user32.GetForegroundWindow())
+
+
+def set_foreground(hwnd: int) -> bool:
+    if not hwnd:
+        return False
+    try:
+        return bool(user32.SetForegroundWindow(hwnd))
+    except Exception:
+        return False
+
+
 def foreground_title() -> str:
     hwnd = user32.GetForegroundWindow()
     buf = ctypes.create_unicode_buffer(256)

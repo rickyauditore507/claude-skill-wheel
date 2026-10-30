@@ -55,6 +55,8 @@ class Controller(QtCore.QObject):
         self._busy = False
         self.demo_mode = False
         self._old_clip = None
+        self._fg_hwnd = 0
+        self.no_paste = False
 
         self.poll = QTimer(self)
         self.poll.setInterval(28)
@@ -130,6 +132,7 @@ class Controller(QtCore.QObject):
             return
         if self.wheel.is_open():
             return
+        self._fg_hwnd = wininput.get_foreground_hwnd()
         self.skills = discover(self.cfg, self.workspace)
         if not self.skills:
             self.tray.showMessage("Skill Wheel", "没有找到任何 skill",
@@ -202,12 +205,23 @@ class Controller(QtCore.QObject):
 
         def work() -> None:
             try:
+                # Hiding the overlay must not move the command to another
+                # VS Code window. Restore the window the user was in.
+                if self._fg_hwnd and wininput.get_foreground_hwnd() != self._fg_hwnd:
+                    logger.info("restoring foreground: %s", wininput.foreground_title())
+                    wininput.set_foreground(self._fg_hwnd)
+                    time.sleep(0.10)
                 if self.cfg.get("focusClaude", True):
+                    logger.info("focus target: %s", wininput.foreground_title())
                     wininput.send_focus_claude()
                 time.sleep(0.35)
                 wininput.release_modifiers()
                 time.sleep(0.06)
-                wininput.send_paste()
+                logger.info("paste target: %s", wininput.foreground_title())
+                if self.no_paste:
+                    logger.info("no-paste diagnostic run")
+                else:
+                    wininput.send_paste()
                 if mode == "insert_and_enter":
                     time.sleep(0.12)
                     wininput.tap(wininput.VK_RETURN)
@@ -280,6 +294,7 @@ def main() -> int:
     parser.add_argument("--shot", default="")
     parser.add_argument("--hover", type=int, default=None)
     parser.add_argument("--trigger", default="")
+    parser.add_argument("--no-paste", action="store_true", help="diagnostics: focus only, never paste")
     parser.add_argument("--catalog", action="store_true", help="list the community catalog")
     parser.add_argument("--catalog-url", default="")
     parser.add_argument("--catalog-path", default="")
@@ -341,6 +356,7 @@ def main() -> int:
 
     ctrl = Controller(cfg, args.workspace or None, args.port, app)
     ctrl.demo_mode = bool(args.demo)
+    ctrl.no_paste = bool(args.no_paste)
     ctrl.start_hotkey()
     ctrl._reload()
 

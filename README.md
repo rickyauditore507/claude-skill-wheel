@@ -63,7 +63,7 @@ powershell -File .\install.ps1
 | `radius` | `250` | 圆盘外半径（逻辑像素） |
 | `innerRadius` | `118` | 中心圆半径 |
 | `insertMode` | `"insert"` | `insert` 用剪贴板粘贴（最稳）；`insert_and_enter` 粘贴并回车；`clipboard` 只复制不注入 |
-| `focusClaude` | `true` | 选中后发送 `Ctrl+Alt+Shift+F12`（扩展注册的 keybinding），聚焦**当前活动窗口**的 Claude 输入框；多窗口/拖出面板也正确 |
+| `focusClaude` | `false` | 默认关闭：直接把命令粘到**当前焦点**。开启后会发送 `Ctrl+Alt+Shift+F12` 尝试聚焦 Claude，但在多窗口/拖出面板里可能把前台切到主窗口（已知限制） |
 | `sources.personal` | `true` | 扫描 `~/.claude/skills/*/SKILL.md` |
 | `sources.project` | `true` | 扫描当前工作区 `.claude/skills/*/SKILL.md` |
 | `sources.plugins` | `false` | 扫描 `~/.claude/plugins/**/skills/**/SKILL.md`（会混入大量市场插件技能） |

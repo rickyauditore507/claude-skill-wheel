@@ -22,7 +22,7 @@ DEFAULT_CONFIG: dict = {
     "pins": [],
     "sort": "usage",
     "insertMode": "insert",          # insert | insert_and_enter | clipboard
-    "focusClaude": True,
+    "focusClaude": False,
     "trackUsage": True,
     "dimBackground": 0.38,
     "moveThreshold": 12,

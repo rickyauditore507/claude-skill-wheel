@@ -2,8 +2,9 @@
 
 ## 0.1.2 — 2026-10-30
 
-- Fix: focus the Claude input in the **active** VS Code window. Dragged-out Claude
-  panels now receive the command instead of the original window.
+- Fix: stop moving the foreground window. `focusClaude` now defaults to `false`;
+  the command is pasted into whatever input is focused (dragged-out Claude panels
+  included). The opt-in focus chord is documented as best-effort.
 - Remove the local HTTP focus bridge; focus is a contributed keybinding
   (`Ctrl+Alt+Shift+F12` -> `claude-vscode.focus`).
 

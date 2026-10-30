@@ -109,13 +109,22 @@ class RadialWheel(QtWidgets.QWidget):
         except Exception:
             self._origin_phys = None
 
-        self.show()
+        # Apply WS_EX_NOACTIVATE before the window is shown. Showing first can
+        # steal focus for a frame; when the overlay hides, the foreground can
+        # bounce to another VS Code window (multi-window bug).
+        hwnd = 0
         try:
             from wininput import apply_overlay_window_style
-            apply_overlay_window_style(int(self.winId()))
+            hwnd = int(self.winId())
+            apply_overlay_window_style(hwnd)
         except Exception:
             pass
-        self.raise_()
+        self.show()
+        if hwnd:
+            try:
+                apply_overlay_window_style(hwnd)
+            except Exception:
+                pass
         self.update()
 
     def close_wheel(self) -> None:

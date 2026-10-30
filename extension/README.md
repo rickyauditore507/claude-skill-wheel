@@ -2,7 +2,7 @@
 
 A radial skill picker for Claude Code. Hold **Ctrl + Alt + Space** (default; Alt-based triggers steal VS Code's menu), slide the mouse to a skill, scroll to flip the ring, and release to insert `/skill-name` into the Claude input.
 
-This extension is the lifecycle companion: it starts/stops the Python overlay, shows a status-bar switch, and focuses the Claude input in the **active window** by contributing `Ctrl+Alt+Shift+F12` to `claude-vscode.focus`.
+This extension is the lifecycle companion: it starts/stops the Python overlay, shows a status-bar switch, and can focus the Claude input by contributing `Ctrl+Alt+Shift+F12` to `claude-vscode.focus` (opt-in; `focusClaude` defaults to `false` because in multi-window setups that command can activate the original window).
 
 ## Requirements
 
