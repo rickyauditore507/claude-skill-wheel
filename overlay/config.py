@@ -8,6 +8,7 @@ import threading
 from pathlib import Path
 
 HOME = Path.home()
+APP_VERSION = "0.2.0"
 APP_DIR = HOME / ".claude" / "skill-wheel"
 CONFIG_PATH = APP_DIR / "config.json"
 USAGE_PATH = APP_DIR / "usage.json"

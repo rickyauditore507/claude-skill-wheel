@@ -44,6 +44,26 @@ powershell -File .\install.ps1
 - 配置 / 日志：`~/.claude/skill-wheel/`（`config.json`、`usage.json`、`overlay.log`）
 - 技能来源：`~/.claude/skills/*/SKILL.md`
 
+## 独立版（不依赖 VS Code）
+
+不想装 VS Code 扩展也能用：圆盘本体是独立的 Windows 托盘程序。
+
+```powershell
+# 构建（首次会创建 .build-venv 并装 PySide6-Essentials / PyInstaller）
+powershell -File .\build-standalone.ps1
+
+# 安装到 %LOCALAPPDATA%\SkillWheel 并启动
+powershell -File .\install-standalone.ps1
+# 需要开机自启时：
+powershell -File .\install-standalone.ps1 -Autostart
+```
+
+- 产物：`dist\SkillWheel.exe`（单文件，约 38MB，无控制台）
+- 托盘菜单：重新扫描 skills、打开配置、查看日志、开机自启、退出
+- 在任何应用里按住 **Ctrl + Alt + Space** 即可：Claude Code 终端、Claude Desktop、浏览器、编辑器
+- 选中后走剪贴板 + `Ctrl+V` 粘贴到当前焦点；`focusClaude` 默认关闭
+- 终端里如果 `Ctrl+V` 不是粘贴键，把配置改成 `"insertMode": "clipboard"`，或换 Windows Terminal
+
 ## 启用
 
 1. VS Code 里执行 **Developer: Reload Window**（或重启 VS Code）。

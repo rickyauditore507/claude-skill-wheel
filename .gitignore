@@ -9,3 +9,6 @@ node_modules/
 *.vsix
 
 assets/video/
+.build-venv/
+build/
+dist/

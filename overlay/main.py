@@ -15,7 +15,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QTimer
 
 import wininput
-from config import APP_DIR, bump_usage, ensure_app_dir, load_config
+from config import APP_DIR, APP_VERSION, bump_usage, ensure_app_dir, load_config
 from hotkey import Hotkey
 from skills import Skill, discover
 from ui import RadialWheel
@@ -32,6 +32,51 @@ def setup_logging() -> None:
     stream = logging.StreamHandler(sys.stderr)
     stream.setFormatter(logging.Formatter("%(message)s"))
     logger.addHandler(stream)
+
+
+def autostart_link() -> Path:
+    return (Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows"
+            / "Start Menu" / "Programs" / "Startup" / "SkillWheel.lnk")
+
+
+def autostart_enabled() -> bool:
+    try:
+        return autostart_link().exists()
+    except Exception:
+        return False
+
+
+def enable_autostart(enabled: bool) -> bool:
+    lnk = autostart_link()
+    try:
+        if not enabled:
+            if lnk.exists():
+                lnk.unlink()
+            return True
+        lnk.parent.mkdir(parents=True, exist_ok=True)
+        if getattr(sys, "frozen", False):
+            target, args = sys.executable, ""
+        else:
+            target = str(Path(sys.executable).with_name("pythonw.exe"))
+            if not Path(target).exists():
+                target = sys.executable
+            args = f'"{Path(__file__).resolve()}"'
+        ps = (
+            "$s=(New-Object -ComObject WScript.Shell).CreateShortcut("
+            f"'{lnk}');"
+            f"$s.TargetPath='{target}';"
+            f"$s.Arguments='{args}';"
+            f"$s.WorkingDirectory='{Path(target).parent}';"
+            f"$s.IconLocation='{target}';"
+            "$s.Save()"
+        )
+        subprocess.run(["powershell", "-NoProfile", "-Command", ps],
+                       check=True, capture_output=True, creationflags=0x08000000)
+        logger.info("autostart enabled -> %s", lnk)
+        return True
+    except Exception:
+        logger.exception("autostart toggle failed")
+        return False
 
 
 class Bridge(QtCore.QObject):
@@ -83,12 +128,18 @@ class Controller(QtCore.QObject):
         p.drawEllipse(28, 4, 8, 8)
         p.end()
         self.tray = QtWidgets.QSystemTrayIcon(QtGui.QIcon(pix), self)
-        self.tray.setToolTip(f"Skill Wheel · {self.cfg.get('trigger', 'alt+`')}")
+        self.tray.setToolTip(f"Skill Wheel {APP_VERSION} · {self.cfg.get('trigger', 'ctrl+alt+space')}")
         menu = QtWidgets.QMenu()
         act_reload = menu.addAction("重新扫描 skills")
         act_reload.triggered.connect(self._reload)
         act_cfg = menu.addAction("打开配置")
         act_cfg.triggered.connect(self._open_config)
+        act_log = menu.addAction("查看日志")
+        act_log.triggered.connect(self._open_log)
+        self.act_autostart = menu.addAction("开机自启")
+        self.act_autostart.setCheckable(True)
+        self.act_autostart.setChecked(self._autostart_enabled())
+        self.act_autostart.toggled.connect(self._toggle_autostart)
         menu.addSeparator()
         act_quit = menu.addAction("退出")
         act_quit.triggered.connect(self.quit)
@@ -98,6 +149,28 @@ class Controller(QtCore.QObject):
             if reason == QtWidgets.QSystemTrayIcon.ActivationReason.Trigger else None
         )
         self.tray.show()
+
+    def _autostart_enabled(self) -> bool:
+        return autostart_enabled()
+
+    def _toggle_autostart(self, checked: bool) -> None:
+        ok = enable_autostart(checked)
+        if not ok:
+            self.act_autostart.blockSignals(True)
+            self.act_autostart.setChecked(not checked)
+            self.act_autostart.blockSignals(False)
+            self.tray.showMessage("Skill Wheel", "开机自启设置失败，查看日志",
+                                  QtWidgets.QSystemTrayIcon.MessageIcon.Warning, 2500)
+        else:
+            self.tray.showMessage("Skill Wheel",
+                                  "已开启开机自启" if checked else "已关闭开机自启",
+                                  QtWidgets.QSystemTrayIcon.MessageIcon.Information, 1600)
+
+    def _open_log(self) -> None:
+        try:
+            os.startfile(str(APP_DIR / "overlay.log"))
+        except Exception:
+            logger.exception("cannot open log")
 
     def _open_config(self) -> None:
         path = APP_DIR / "config.json"
@@ -295,6 +368,8 @@ def main() -> int:
     parser.add_argument("--hover", type=int, default=None)
     parser.add_argument("--trigger", default="")
     parser.add_argument("--no-paste", action="store_true", help="diagnostics: focus only, never paste")
+    parser.add_argument("--install-autostart", action="store_true")
+    parser.add_argument("--remove-autostart", action="store_true")
     parser.add_argument("--catalog", action="store_true", help="list the community catalog")
     parser.add_argument("--catalog-url", default="")
     parser.add_argument("--catalog-path", default="")
@@ -308,6 +383,12 @@ def main() -> int:
     cfg = load_config()
     if args.trigger:
         cfg["trigger"] = args.trigger
+
+    if args.install_autostart or args.remove_autostart:
+        ok = enable_autostart(bool(args.install_autostart))
+        print("autostart:", "enabled" if args.install_autostart else "disabled",
+              "ok" if ok else "failed")
+        return 0 if ok else 1
 
     if args.list:
         for s in discover(cfg, args.workspace or None):
